@@ -12,8 +12,10 @@ var app = express();
 // Use environment defined port or 3000
 var port = process.env.PORT || 3000;
 
-// Connect to a MongoDB --> Uncomment this once you have a connection string!!
-//mongoose.connect(process.env.MONGODB_URI).catch(function (err) { console.error('MongoDB connection error:', err.message); });
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI).catch(function (err) {
+    console.error('MongoDB connection error:', err.message);
+});
 
 // Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function (req, res, next) {
@@ -30,6 +32,20 @@ app.use(express.json());
 
 // Use routes as a module (see index.js)
 require('./routes')(app, router);
+
+// Anything that did not match a route is not found
+app.use(function (req, res) {
+    res.status(404).json({ message: 'Not Found', data: 'This endpoint does not exist' });
+});
+
+// Never expose internals, whatever went wrong
+app.use(function (err, req, res, next) {
+    if (err && err.status === 400) {
+        return res.status(400).json({ message: 'Bad Request', data: 'The request could not be understood' });
+    }
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error', data: 'An unexpected error occurred.' });
+});
 
 // Start the server
 app.listen(port);
