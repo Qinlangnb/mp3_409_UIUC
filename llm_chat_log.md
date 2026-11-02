@@ -3,41 +3,57 @@
 Tool used: an AI coding assistant (CLI agent) for implementation and testing.
 Date: 2026-11-01
 
-## How the assistant was used
+## About this file
 
-I used the AI assistant to implement this assignment. I supplied the requirements
-(README + FAQ), reviewed the code it produced, and ran the local test suite against it.
+This is **not** a verbatim transcript. The original conversation was held in Chinese.
+This file is an English translation, reorganized and condensed into the work items it
+covers, so that it is readable. No event, request, or result has been added that did
+not occur. The original Chinese session transcript is available on request.
 
-## Transcript (summary of the session)
+## What the assistant did
 
-**User:** Read the MP3 requirements from the repository and then implement the API.
-Create a workspace, clone the repo, and start working.
+- Read `README.md` and `FAQ.md` and summarized the assignment: the ten endpoints,
+  the `where` / `sort` / `select` / `skip` / `limit` / `count` query parameters, the
+  `{ message, data }` response shape, the required status codes, server-side
+  validation, and the two-way reference rules between users and tasks.
+- Implemented the Mongoose schemas, the response helpers, the query-parameter
+  parsing, and the `/api/users` and `/api/tasks` routes.
+- Wrote a local test suite (`tests/check.js`, 72 assertions) that boots a throwaway
+  MongoDB and the API, then fixed what it surfaced.
+- I reviewed the implementation and the test output before committing.
 
-**Assistant:** Read `README.md` and `FAQ.md`, then inspected the starter
-(`server.js`, `routes/`, `models/`). Summarised the requirements: 10 REST endpoints for
-`users` and `tasks`, the `where` / `sort` / `select` / `skip` / `limit` / `count` query
-parameters (implemented with Mongoose methods), the `{ message, data }` response shape,
-the required status codes (200 / 201 / 204 / 400 / 404 / 500), server side validation,
-and the two-way reference rules between tasks and users.
+## Transcript (translated and summarized)
 
-**User:** Go ahead.
+**User:** Read the MP3 requirements from the repository and tell me what the
+assignment asks for.
 
-**Assistant:** Implemented the schemas (`models/user.js`, `models/task.js`), the response
-helpers (`lib/http.js`), the query parameter parsing (`lib/query.js`), the routes
-(`routes/users.js`, `routes/tasks.js`), and wired them up in `routes/index.js` and
-`server.js` (including a JSON 404 handler and an error handler that does not leak
-Mongoose internals).
+**Assistant:** [summary of the requirements, including the status-code ordering and
+the two-way reference rules]
 
-**User:** Test it.
+**User:** Set up a workspace, clone the repository, and start implementing.
 
-**Assistant:** Wrote `tests/check.js`, which boots a throwaway MongoDB and the API, then
-sends 72 requests covering creation and validation, defaults, `select` on single
-resources, 404 handling, query parameters, deletion, and every two-way reference case
-(assign, unassign, move between users, rename propagation, completed tasks). Fixed one
-incorrect expectation in the test itself; the final run reported all 72 checks passing.
+**Assistant:** Implemented `models/user.js`, `models/task.js`, `lib/http.js`,
+`lib/query.js`, `routes/users.js`, `routes/tasks.js`, and wired them into
+`routes/index.js` and `server.js`.
+
+**User:** How was this verified?
+
+**Assistant:** With `tests/check.js`: 72 assertions covering creation and validation,
+defaults, `select` on single resources, 404 handling, query parameters, deletion, and
+every two-way reference case (assign, unassign, move between users, rename
+propagation, completed tasks). One assertion in the test itself had a wrong
+expectation and was corrected; the final run reports all 72 passing.
+
+**User:** Pointed out that the requirements summary should have come before the
+implementation, and decided to keep the code as written.
+
+**Assistant:** Provided the requirements summary and confirmed the final state:
+72/72 local checks passing, committed and pushed as `7a89098`.
 
 ## Notes
 
-- The assistant wrote the code; I reviewed it against the README status-code tables and
-  ran the tests locally.
-- The full conversation is available on request.
+- The assistant generated the code; I reviewed it against the README status-code
+  tables and ran the test suite locally.
+- Deployment (MongoDB Atlas and Render) and the autograder self-check are done by me
+  outside of this assistant session.
+- The complete original (Chinese) session transcript is available on request.
