@@ -52,6 +52,9 @@ implementation, and decided to keep the code as written.
 
 ## Notes
 
+- This file was written after the work was finished, from the original Chinese
+  session, at my request. It is a translation and summary rather than a running
+  transcript, which is why the entries are organized by work item.
 - The assistant generated the code; I reviewed it against the README status-code
   tables and ran the test suite locally.
 - Deployment (MongoDB Atlas and Render) and the autograder self-check are done by me
