@@ -5,6 +5,12 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const { spawn } = require('child_process');
 const path = require('path');
 
+require('dotenv').config();
+
+// By default the checks run against a throwaway in-memory MongoDB.
+// Set USE_REAL_DB=1 (with MONGODB_URI in .env) to run them against the real cluster.
+const USE_REAL_DB = process.env.USE_REAL_DB === '1' && !!process.env.MONGODB_URI;
+
 const PORT = 3999;
 const BASE = `http://127.0.0.1:${PORT}/api`;
 
@@ -50,8 +56,16 @@ async function waitForServer() {
 }
 
 async function main() {
-    const mongo = await MongoMemoryServer.create();
-    const uri = mongo.getUri();
+    let mongo = null;
+    let uri;
+    if (USE_REAL_DB) {
+        uri = process.env.MONGODB_URI;
+        console.log('using the database from MONGODB_URI');
+    } else {
+        mongo = await MongoMemoryServer.create();
+        uri = mongo.getUri();
+        console.log('using a throwaway in-memory MongoDB');
+    }
 
     const server = spawn(process.execPath, [path.join(__dirname, '..', 'server.js')], {
         env: Object.assign({}, process.env, { MONGODB_URI: uri, PORT: String(PORT) }),
@@ -337,7 +351,7 @@ async function main() {
         failures.push('threw: ' + err.stack);
     } finally {
         server.kill();
-        await mongo.stop();
+        if (mongo) await mongo.stop();
     }
 
     console.log('\npassed: ' + passed);

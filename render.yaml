@@ -1,0 +1,13 @@
+# Render blueprint: lets Render configure the web service automatically.
+# The database password is never stored here; Render asks for MONGODB_URI
+# in the dashboard (Environment -> Add Environment Variable).
+services:
+    - type: web
+      name: mp3-api
+      runtime: node
+      plan: free
+      buildCommand: npm install
+      startCommand: npm start
+      envVars:
+          - key: MONGODB_URI
+            sync: false
